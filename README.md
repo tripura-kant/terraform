@@ -1,3 +1,15 @@
-# terraform
+Edit the values of these files
 
-#majorly EC2, load balancer, lambda, dynamoDB/RDS, S3
+production.tfvars
+staging.tfvars
+dev.tfvars
+
+example like this
+
+bucket_name = "staging-backend-bucket-name22"
+
+then run
+
+terraform init
+terraform plan
+terraform apply 

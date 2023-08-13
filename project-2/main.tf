@@ -85,6 +85,7 @@ resource "aws_db_subnet_group" "education" {
 }
 
 
+
 resource "aws_db_instance" "rds_instance" {
   allocated_storage    = 20
   storage_type         = "gp2"

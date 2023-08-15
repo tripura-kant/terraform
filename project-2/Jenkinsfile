@@ -1,0 +1,37 @@
+pipeline {
+    agent any
+    options {
+        buildDiscarder(logRotator(numToKeepStr: '5'))
+        timestamps()
+    }
+
+    stages {
+        stage('init') {
+            steps {
+                echo "Initializing..."
+                // You can perform other initialization steps here if needed
+            }
+        }
+        
+        stage("Git Clone and Terraform ") {
+            steps {
+                script {
+                    // Clone the Git repository and navigate to the directory
+                    sh 'rm -rf terraform/project-2'
+                    sh 'rm -rf terraform'
+                    sh 'git clone https://github.com/tripura-kant/terraform.git'
+                    dir('terraform/project-2') {
+                        sh 'terraform init'
+                        sh 'terraform plan'
+                        
+                        sh 'terraform destroy --auto-approve'
+                        
+                    // Set build description and display name
+                    currentBuild.description = "This build is used for tf code check"
+                    currentBuild.displayName = "tf_Check"
+                    }
+                }
+            }
+        }
+    }
+}

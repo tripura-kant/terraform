@@ -12,7 +12,9 @@ pwd
 sudo yum update -y
 #install apache server and mysql client
 sudo yum install -y httpd
-sudo yum install -y mysql
+#sudo yum install -y mysql
+sudo yum install -y https://dev.mysql.com/get/mysql80-community-release-el7-3.noarch.rpm
+sudo yum install -y mysql-community-server
 
 
 #first enable php7.xx from amazon-linux-extra and install it
@@ -25,16 +27,16 @@ sudo yum -y install gcc ImageMagick ImageMagick-devel ImageMagick-perl
 sudo yum update -y
 #sudo yum install -y php-pear php-devel gcc ImageMagick-devel
 sudo pecl install imagick
-chmod 755 /usr/lib64/php/modules/imagick.so
-cat &lt;&gt;/etc/php.d/20-imagick.ini
+sudo chmod 755 /usr/lib64/php/modules/imagick.so
+sudo cat &lt;&gt;/etc/php.d/20-imagick.ini
 
 extension=imagick
 
 #EOF
 
-systemctl restart php-fpm.service
+sudo systemctl restart php-fpm.service
 
-systemctl start httpd
+sudo systemctl start httpd
 
 #Change OWNER and permission of directory /var/www
 usermod -a -G apache ec2-user

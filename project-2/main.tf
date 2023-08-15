@@ -84,7 +84,7 @@ resource "aws_subnet" "prod_public_subnet" {
 }
 
 // Create a group of private subnets based on the variable subnet_count.private
-resource "aws_subnet" "private_private_subnet" {
+resource "aws_subnet" "prod_private_subnet" {
   count = var.subnet_count.private
 
   vpc_id = aws_vpc.prod_vpc.id

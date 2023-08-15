@@ -205,62 +205,21 @@ resource "aws_db_instance" "prod_database" {
   engine_version = var.settings.database.engine_version
   instance_class = var.settings.database.instance_class
   #db_name = var.settings.database.db_name
-
-  // The master user of our database. This is being set by the
-  // db_username variable, which is being declared in our secrets file
   username = var.db_username
-
-  // The password for the master user. This is being set by the 
-  // db_username variable, which is being declared in our secrets file
   password = var.db_password
-
-  // This is the DB subnet group "prod_db_subnet_group"
   db_subnet_group_name = aws_db_subnet_group.prod_db_subnet_group.id
-
-  // This is the security group for the database. It takes a list, but since
-  // we only have 1 security group for our db, we are just passing in the
-  // "prod_db_sg" security group
   vpc_security_group_ids = [aws_security_group.prod_db_sg.id]
-
-  // This refers to the skipping final snapshot of the database. It is a 
-  // boolean that is set by the settings.database.skip_final_snapshot
-  // variable, which is currently set to true.
   skip_final_snapshot = var.settings.database.skip_final_snapshot
 }
 
-// Create a key pair named "prod_kp"
-resource "aws_key_pair" "prod_kp" {
-  // Give the key pair a name
-  key_name = "prod_kp"
-
-  // This is going to be the public key of our
-  // ssh key. The file directive grabs the file
-  // from a specific path. Since the public key
-  // was created in the same directory as main.tf
-  // we can just put the name
-  public_key = file("./test-key.pub")
-}
-
-// Create an EC2 instance named "prod_web"
 resource "aws_instance" "prod_web" {
-  // count is the number of instance we want
-  // since the variable settings.web_app.cont is set to 1, we will only get 1 EC2
   count = var.settings.web_app.count
   ami = data.aws_ami.linux.id
   key_name      = "terraform-key"
-
-  // This is the instance type of the EC2 instance. The variable
-  // settings.web_app.instance_type is set to "t2.micro"
   instance_type = var.settings.web_app.instance_type
   subnet_id = aws_subnet.prod_public_subnet[count.index].id
   user_data = data.template_file.userdata.rendered
-
-  // The security groups of the EC2 instance. This takes a list, however we only
-  // have 1 security group for the EC2 instances.
   vpc_security_group_ids = [aws_security_group.prod_web_sg.id]
-
-  // We are tagging the EC2 instance with the name "prod_db_" followed by
-  // the count index
   tags = {
     Name = "prod_web_${count.index}"
   }
@@ -269,23 +228,9 @@ resource "aws_instance" "prod_web" {
 // Create an Elastic IP named "prod_web_eip" for each
 // EC2 instance
 resource "aws_eip" "prod_web_eip" {
-  // count is the number of Elastic IPs to create. It is
-  // being set to the variable settings.web_app.count which
-  // refers to the number of EC2 instances. We want an
-  // Elastic IP for every EC2 instance
   count = var.settings.web_app.count
-
-  // The EC2 instance. Since prod_web is a list of 
-  // EC2 instances, we need to grab the instance by the 
-  // count index. Since the count is set to 1, it is
-  // going to grab the first and only EC2 instance
   instance = aws_instance.prod_web[count.index].id
-
-  // We want the Elastic IP to be in the VPC
   vpc = true
-
-  // Here we are tagging the Elastic IP with the name
-  // "prod_web_eip_" followed by the count index
   tags = {
     Name = "prod_web_eip_${count.index}"
   }

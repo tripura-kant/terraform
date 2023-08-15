@@ -67,13 +67,6 @@ echo WordPress Installed
 
 For the previous userdata script to work, use this block to call your script in terraform:
 
-// -----------------------------------------------
-// Change USERDATA varible value after grabbing RDS endpoint info
-// -----------------------------------------------
-data "template_file" "user_data" {
-template = file("userdata.sh")
-vars = {
-db_username = var.database_user
-db_user_password = var.database_password
-db_name = var.database_name
-db_RDS = aws_db_instance
+# -----------------------------------------------
+# Change USERDATA variable value after grabbing RDS endpoint info
+# -----------------------------------------------

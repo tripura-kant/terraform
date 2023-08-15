@@ -12,23 +12,25 @@ pwd
 sudo yum update -y
 #install apache server and mysql client
 sudo yum install -y httpd
-yum install -y mysql
+sudo yum install -y mysql
 
 
 #first enable php7.xx from amazon-linux-extra and install it
 
-amazon-linux-extras enable php7.4
-yum clean metadata
-yum install y php php{pear,cgi,common,curl,mbstring,gd,mysqlnd,gettext,bcmath,json,xml,fpm,intl,zip,imap,devel}
+sudo amazon-linux-extras enable php7.4
+sudo yum clean metadata
+sudo yum install -y php php{pear,cgi,common,curl,mbstring,gd,mysqlnd,gettext,bcmath,json,xml,fpm,intl,zip,imap,devel}
 #install imagick extension
-yum -y install gcc ImageMagick ImageMagick-devel ImageMagick-perl
-pecl install imagick
+sudo yum -y install gcc ImageMagick ImageMagick-devel ImageMagick-perl
+sudo yum update -y
+#sudo yum install -y php-pear php-devel gcc ImageMagick-devel
+sudo pecl install imagick
 chmod 755 /usr/lib64/php/modules/imagick.so
 cat &lt;&gt;/etc/php.d/20-imagick.ini
 
 extension=imagick
 
-EOF
+#EOF
 
 systemctl restart php-fpm.service
 
@@ -60,9 +62,9 @@ chmod -R 774 /var/www/html
 enable .htaccess files in Apache config using sed command
 sed -i '//,// s/AllowOverride None/AllowOverride all/' /etc/httpd/conf/httpd.conf
 
-#Make apache autostart and restart apache
-systemctl enable httpd.service
-systemctl restart httpd.service
+    #Make apache autostart and restart apache
+    systemctl enable httpd.service
+    systemctl restart httpd.service
 echo WordPress Installed
 
 For the previous userdata script to work, use this block to call your script in terraform:

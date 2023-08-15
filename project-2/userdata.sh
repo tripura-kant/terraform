@@ -1,5 +1,3 @@
-#The script:
-
 #!/bin/bash
 
 #variable will be populated by terraform template
@@ -8,10 +6,12 @@ db_user_password=${db_user_password}
 db_name=${db_name}
 db_RDS=${db_RDS}
 
+touch new-file
+pwd
 #install LAMP Server
-yum update -y
+sudo yum update -y
 #install apache server and mysql client
-yum install -y httpd
+sudo yum install -y httpd
 yum install -y mysql
 
 

@@ -82,7 +82,7 @@ variable "my_ip" {
   description = "Your IP address"
   type        = string
   sensitive   = true
-  default = "122.176.187.125"
+  default = "106.215.108.221"
 }
 
 // This variable contains the database master user
@@ -101,6 +101,12 @@ variable "db_password" {
   type        = string
   sensitive   = true
   default = "saumyadbpass"
+}
+
+variable "db_name" {
+  description = "Database name"
+  type        = string
+  default = "tutorial"
 }
 
 # data "template_file" "user_data" {

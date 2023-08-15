@@ -8,6 +8,10 @@ terraform {
       source  = "hashicorp/aws"
       version = "4.0.0"
     }
+    template = {
+      source = "hashicorp/template"
+      version = "2.2.0"
+    }
   }
 
   // This is the required version of Terraform
@@ -26,6 +30,16 @@ provider "aws" {
 // zones in our defined region
 data "aws_availability_zones" "available" {
   state = "available"
+}
+
+data "template_file" "userdata" {
+  template = file("${path.module}/userdata.sh")
+  vars = {
+    db_username = var.db_username
+    db_user_password = var.db_password
+    db_name = var.db_name
+    db_RDS = aws_db_instance.tutorial_database.address
+  }
 }
 
 // Create a data object called "ubuntu" that holds the latest
@@ -242,7 +256,7 @@ resource "aws_security_group" "tutorial_web_sg" {
     to_port     = "22"
     protocol    = "tcp"
     // This is using the variable "my_ip"
-    cidr_blocks = ["${var.my_ip}/32"]
+    cidr_blocks = ["0.0.0.0/0"]
   }
 
   // This outbound rule is allowing all outbound traffic
@@ -359,7 +373,7 @@ resource "aws_key_pair" "tutorial_kp" {
   // from a specific path. Since the public key
   // was created in the same directory as main.tf
   // we can just put the name
-  public_key = file("new-key.pub")
+  public_key = file("./test-key.pub")
 }
 
 // Create an EC2 instance named "tutorial_web"
@@ -382,7 +396,7 @@ resource "aws_instance" "tutorial_web" {
   // Since count is 1, we will be grabbing the first subnet in  	
   // "tutorial_public_subnet" and putting the EC2 instance in there
   subnet_id              = aws_subnet.tutorial_public_subnet[count.index].id
-  
+  user_data            = data.template_file.userdata.rendered
   // The key pair to connect to the EC2 instance. We are using the "tutorial_kp" key 
   // pair that we created
   key_name               = aws_key_pair.tutorial_kp.key_name
@@ -422,4 +436,3 @@ resource "aws_eip" "tutorial_web_eip" {
     Name = "tutorial_web_eip_${count.index}"
   }
 }
-

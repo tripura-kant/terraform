@@ -109,7 +109,7 @@ resource "aws_vpc" "tutorial_vpc" {
 
   // We are tagging the VPC with the name "tutorial_vpc"
   tags = {
-    Name = "tutorial_vpc"
+    Name = "prod_vpc"
   }
 }
 
